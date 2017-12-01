@@ -14,6 +14,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
+[Model]: ./examples/model.png
 [OriginalImage]: ./examples/OriginalImage.png
 [Augmentations]: ./examples/ImageAugmentations.png
 [AngleDistribution]: ./examples/SteeringAngleDistribution.png
@@ -23,7 +24,7 @@ The goals / steps of this project are the following:
 [CenterDrive]: ./examples/CenterDrive.gif
 
 ## Rubric Points
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
+### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
 ---
 ### Files Submitted & Code Quality
@@ -94,43 +95,7 @@ The final model architecture (model.py lines 18-24) consisted of a convolution n
 
 Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
 
-Layer (type)                 Output Shape              Param #   
-=================================================================
-lambda_1 (Lambda)            (None, 160, 320, 3)       0         
-_________________________________________________________________
-cropping2d_1 (Cropping2D)    (None, 65, 320, 3)        0         
-_________________________________________________________________
-lambda_2 (Lambda)            (None, 64, 64, 3)         0         
-_________________________________________________________________
-conv2d_1 (Conv2D)            (None, 30, 30, 24)        1824      
-_________________________________________________________________
-conv2d_2 (Conv2D)            (None, 13, 13, 36)        21636     
-_________________________________________________________________
-conv2d_3 (Conv2D)            (None, 5, 5, 48)          43248     
-_________________________________________________________________
-conv2d_4 (Conv2D)            (None, 3, 3, 64)          27712     
-_________________________________________________________________
-conv2d_5 (Conv2D)            (None, 1, 1, 64)          36928     
-_________________________________________________________________
-flatten_1 (Flatten)          (None, 64)                0         
-_________________________________________________________________
-dense_1 (Dense)              (None, 100)               6500      
-_________________________________________________________________
-dropout_1 (Dropout)          (None, 100)               0         
-_________________________________________________________________
-dense_2 (Dense)              (None, 50)                5050      
-_________________________________________________________________
-dropout_2 (Dropout)          (None, 50)                0         
-_________________________________________________________________
-dense_3 (Dense)              (None, 10)                510       
-_________________________________________________________________
-dropout_3 (Dropout)          (None, 10)                0         
-_________________________________________________________________
-dense_4 (Dense)              (None, 1)                 11        
-=================================================================
-Total params: 143,419
-Trainable params: 143,419
-Non-trainable params: 0
+![Model Architecture][Model]
 
 #### 3. Creation of the Training Set & Training Process
 
