@@ -22,6 +22,8 @@ The goals / steps of this project are the following:
 [RecoveryLeft]: ./examples/RecoveryLeft.gif
 [RecoveryRight]: ./examples/RecoveryRight.gif
 [CenterDrive]: ./examples/CenterDrive.gif
+[Run1]: ./run1.mp4
+[Run2]: ./run2.mp4
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -32,20 +34,43 @@ The goals / steps of this project are the following:
 #### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
-* model.py containing the script to create and train the model
-* drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
+* model.ipynb jupyter notebook containing model implementation and training
+* model.py plain python version of jupyter notebook
+* model.html hmtl version of jupyter notebook
+* drive.py for driving the car in autonomous mode, don't have any changes here, except experimented with speed on fly
+* my_model.h5 containing a trained convolution neural network 
+* writeup_report.md this file, summarizing the results
+* run1.mp4 output of trained model on track1
+* run2.mp4 output of trained model on track2
 
 #### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
 ```sh
-python drive.py model.h5
+python drive.py my_model.h5
+```
+Following links to my youtube channel videos are captured with desktop screen session, running simulator.
+
+##### Track1
+I had used only Track1 images to train my model, and here is how it works:
+[![Track1](https://img.youtube.com/vi/8sW5TuoxRYg/0.jpg)](https://www.youtube.com/watch?v=8sW5TuoxRYg)
+
+![Run1][Run1] is the video created with front camera images stored in run1 dir using video.py utility:
+```sh
+python video.py run1
+```
+
+##### Track2
+Following video for Track2 shows, how well the model has adapted to new track, *never seen it before*.
+[![Track2](https://img.youtube.com/vi/NbnvLXlP748/0.jpg)](https://www.youtube.com/watch?v=NbnvLXlP748)
+
+![Run2][Run1] is the video created with front camera images stored in run2 dir using video.py utility:
+```sh
+python video.py run2
 ```
 
 #### 3. Submission code is usable and readable
 
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+The model.ipynb jupyter notebook file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
 
 ### Model Architecture and Training Strategy
 
@@ -89,11 +114,6 @@ The final step was to run the simulator to see how well the car was driving arou
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
-Track1
-https://www.youtube.com/watch?v=8sW5TuoxRYg
-
-Track2
-https://www.youtube.com/watch?v=NbnvLXlP748
 
 #### 2. Final Model Architecture
 
