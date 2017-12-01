@@ -105,52 +105,65 @@ For details about how I created the training data, see the next section.
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+The overall strategy for deriving a model architecture was to use a stronger model architecture, that is geared to handle this task of keeping car on track for a long time.
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+I started with customizing VGG16 model in Keras libraries, by changing its final layers. After some struggle to make it work, I realized it might be worthwhile what David has used in lecture videos. Then I switched to NVIDIA's CNN model, as it was used in lecture videos too and many other students on forum have been claiming to make it work for the task easily.
 
 In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
 
-To combat the overfitting, I modified the model so that ...
+To combat the overfitting, I added dropout layers after all fully connected layers.
 
-Then I ... 
+Next challenge that I faced was amount of time spent to run the model. I remember it used to take about 45 minutes to 1 hour for a single epoch on my VM with no GPU. With few days of struggle to keep the model running for hours, I realized I need better machine, AWS GPU Instance? Then I stumbled upon the very same question, [Do I need an aws instance](https://discussions.udacity.com/t/do-i-need-an-aws-instance/241847/3). Thanks to Subodh's advice to resize input images to 64x64, it significantly reduced training time easily by 10x factor. There on, I could make mistakes earlier and fixed them faster.
 
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
+The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track on turns. To improve the driving behavior in these cases, I started collecting more data, which seems to have improved for few turns, but car was still going off the track, specially in mud area right after the bridge. Searching through the forums, I releazed two dominent peice of advice which could help here:
+1. Eliminating zero angle bias in input data by throwing away 70% of the images with small angle. Thanks to [Fernando](https://discussions.udacity.com/t/idea-to-further-improve-my-model/354787/6).
+2. Collecting recovery data as advised in lecture notes as well as forum.
 
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+To validate the zero angle bias, I plotted the angle distribution using seaborn distplot, as seen below, majority of the angles are biased towards zero.
+
+![Steering Angle Distribution][AngleDistribution]
+
+I was initially lazy to collect recovery data as it was a tedious step to switch between recording on and off at right time to not corrupt input. Eventually I made up my mind and collected these data sets and it really paid me off.
+
+With these modification, the vehicle is able to drive autonomously around the track without leaving the road, although, it still hit the side marking at 1-2 spots.
 
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
-
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
+Here is a visualization of the architecture
 
 ![Model Architecture][Model]
 
 #### 3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
+To capture good driving behavior, I first recorded three laps on track one using center lane driving and one lap in reverse direction to eliminate inherent left turn bias in track1. Here is an example gif image of center lane driving:
 
 ![Center Lane Driving][CenterDrive]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to drift back in center if it hits the curb. Follwing gifs show what a recovery looks like starting from left and right side of the lane:
 
 ![Recovery from Left Lane][RecoveryLeft]
 ![Recovery from Right Lane][RecoveryRight]
 
-Then I repeated this process on track two in order to get more data points.
+I kept the track two untouched for training the model, just to challenge myself if my model can adapt its learning from track1 to track 2. To my surprise, it ran much better on Track2!
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
+To augment the data set, I used following augmentations somw of which are inpired by [Vivek Yadav](https://chatbotslife.com/using-augmentation-to-mimic-human-driving-496b569760a9):
+1. Flipped images to create a mirror image and eliminate bias for either left or right angle. Flipping also requires negating steering angles.
+2. Randomly shift the input images horizontally to create additional example for driving at more or less steering angle. It can help recovery as well. Steering angle is adjusted assuming the full image covers a angle range of [-1, 1]. Our example images are 320 pixel wide, so shift in sterring angle per pixel is about 2.0/320 = 0.00625.
+3. Randomly shift the input images verically to simulate bumpiness in track. No corresponding change in steering angle :)
+4. Randomly change brightness of images to simulate different driving conditions.
 
 ![Original Image][OriginalImage]
 ![Augmented Images][Augmentations]
 
-Etc ....
+After the collection process, I had about 10K number of data points. Each data point had 3 images though from left, center and right camera images. This is how I used these images in generator code.
+1. Choose a small angle (< 0.2) only with 30% probability i.e. effectively reduce input small angle images by 70%.
+2. If its not time to pick small angle center camera image, randomly pick left or right camera image instead with sterring angle adjusted by 0.2, so that it does not have 0 angle bias again.
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+After selecting above image, I augmented selected image with 5 more examples by preprocessing these images as described above.
 
+Above transformation steps are performed inside the generator code itself. I had already randomly shuffled the data set and put 20% of the data into a validation set, The generator for training set is instructed by a flag to run the above transformations and augmentation steps, such that validation images remain real free from any augmentations.
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5 as evidenced by increasing validation loss with more epochs. I used an adam optimizer so that manually training the learning rate wasn't necessary. Following plot shows MSE loss value at each epoch:
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+![MSE Loss per epoch][MSELoss]
