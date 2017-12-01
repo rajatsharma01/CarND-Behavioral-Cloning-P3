@@ -60,10 +60,10 @@ python video.py run1
 ```
 
 ##### Track2
-Following video for Track2 shows, how well the model has adapted to new track, *never seen it before*.
+Following video for Track2 shows, how well the model has adapted to new track, <span style="color: red">never seen it before</span>.
 [![Track2](https://img.youtube.com/vi/NbnvLXlP748/0.jpg)](https://www.youtube.com/watch?v=NbnvLXlP748)
 
-![Run2][Run1] is the video created with front camera images stored in run2 dir using video.py utility:
+![Run2][Run2] is the video created with front camera images stored in run2 dir using video.py utility:
 ```sh
 python video.py run2
 ```
@@ -76,23 +76,28 @@ The model.ipynb jupyter notebook file contains the code for training and saving 
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+My model is adapted from NVIDIA's CNN pipeline as described [here](https://arxiv.org/pdf/1604.07316.pdf), consisting of 5 convolution layers: first 3 have 5x5 filter and next 2 have 3x3 filter. There are 3 fully connected (Dense) layers of 100, 50 and 10 depth each and final output layer of depth 1 (single output).
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+I had to customize NVIDIA's pipeline with following 3 additional layers:
+1. First layer to input is a Lamba layer which normalizes the input image x as (x/255.0) - 0.5
+2. Second layer is a Croppying2D layer which crops input images by 70 pixels from above and 25 pixels from below.
+3. Third layer is a Lamba layer which resizes the images further by 64x64 pixels. This tremendously helps me my model to run    faster by 10x factor, specially on my laptop which doesn't have any GPU.
+
+The model includes ELU layers to introduce nonlinearity, reason for choosing ELU over RELU is to avoid diminishing gradient problem as it doesn't turn off the weights completely, rather sets them to negative values.
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
+The model contains dropout layers in order to reduce overfitting, After each Dense fully connected layer, I have a dropout layer with 0.5 probability. 
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model was trained and validated on different data sets to ensure that the model was not overfitting. To do so, we had split input samples using sklearn.model_selection.train_test_split to split samples into 80% test and 20% validation set. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track. Model was trained only on track1 images, however when tested on track2, it could stay track througout the run.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer, so the learning rate was not tuned manually. To limit memory consumption of the model, we are using Generators to load images on fly in batch size of 32.
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road. Track1 seems to have more number of left turns only, so training on Track1 can introduce bias for left turns. To generalize model better, I have also collected samples by driving in revese direction on Track1.
 
 For details about how I created the training data, see the next section. 
 
