@@ -89,6 +89,12 @@ The final step was to run the simulator to see how well the car was driving arou
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
+Track1
+https://www.youtube.com/watch?v=8sW5TuoxRYg
+
+Track2
+https://www.youtube.com/watch?v=NbnvLXlP748
+
 #### 2. Final Model Architecture
 
 The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
