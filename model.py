@@ -256,6 +256,19 @@ my_model.add(Dense(1))
 my_model.summary()
 
 
+# Visualize network architecture using keras visualization utility
+
+# In[13]:
+
+
+from IPython.display import SVG
+from keras.utils.vis_utils import model_to_dot
+from keras.utils import plot_model
+
+plot_model(my_model, show_shapes=True, to_file='./examples/model.png')
+SVG(model_to_dot(my_model, show_shapes=True).create(prog='dot', format='svg'))
+
+
 # Train the model using model.fit_generator method
 
 # In[10]:
